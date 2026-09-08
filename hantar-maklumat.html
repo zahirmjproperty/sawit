@@ -108,7 +108,7 @@
       <div class="form-card">
         <span class="step-tag">LANGKAH 1</span>
         <h2>🧑‍💼 Saya hantar sebagai</h2>
-        <p class="sub">Satu pihak boleh jadi pembeli & pengurus/kontraktor sekali (cth. Anak Jati Maju Enterprise)</p>
+        <p class="sub">Satu pihak boleh jadi pembeli & pengurus/kontraktor sekali — pilih pilihan ketiga jika itu kes anda</p>
         <div class="role-cards" id="roleCards">
           <div class="role-card" data-role="pembeli">
             <div class="rc-icon">🤝</div>
@@ -155,7 +155,7 @@
         <!-- Seksyen A: Jualan FFB -->
         <div id="sec_pembeli" class="hidden">
           <div class="sec-head"><span class="ic">🤝</span> Rekod Jualan FFB (Log Hasil)</div>
-          <p style="font-size:12.5px;color:var(--kelabu);margin:0 0 10px">Satu baris bagi setiap potong / penyata. Kasar, Jumlah Potongan & Bersih dikira automatik.</p>
+          <p style="font-size:12.5px;color:var(--kelabu);margin:0 0 10px">Satu baris bagi setiap potong/jualan. Amaun potongan & jumlah keseluruhan dikira automatik (kos dikendalikan dalam borang Tuntutan Kontraktor).</p>
           <div id="rowList_pembeli"></div>
           <button type="button" class="btn-add" data-sec="pembeli">➕ Tambah rekod jualan/potong</button>
           <div id="sum_pembeli"></div>
@@ -252,15 +252,10 @@ var BLOK_OPTIONS = [{v:"B-001", l:"B-001 — PT Jamil"}];
 var FIELDS_PEMBELI = [
   {k:"tarikh",  t:"date",   label:"Tarikh jualan", req:true},
   {k:"blok",    t:"select", label:"Blok", req:true, opts:BLOK_OPTIONS},
-  {k:"tan",     t:"number", label:"Berat FFB (tan)", req:true, step:"0.001", ph:"cth: 1.3"},
-  {k:"harga",   t:"number", label:"Harga (RM/tan)", req:true, step:"0.01", ph:"cth: 840"},
-  {k:"upah",    t:"number", label:"Upah Potong (RM)", step:"0.01", ph:"0"},
-  {k:"racun",   t:"number", label:"Racun (RM)", step:"0.01", ph:"0"},
-  {k:"baja",    t:"number", label:"Baja (RM)", step:"0.01", ph:"0"},
-  {k:"browning",t:"number", label:"Browning/Pruning (RM)", step:"0.01", ph:"0"},
-  {k:"lain",    t:"number", label:"Potongan Lain (RM)", step:"0.01", ph:"0"},
-  {k:"no_penyata", t:"text", label:"No. Penyata/Chit", ph:"cth: CHIT-0012"},
-  {k:"nota",    t:"text",   label:"Nota", cls:"full", ph:"Maklumat tambahan (jika ada)"}
+  {k:"berat",   t:"number", label:"Berat FFB", req:true, step:"any", ph:"cth: 1300"},
+  {k:"unit",    t:"select", label:"Unit Berat", opts:[{v:"kg", l:"kg"}, {v:"tan", l:"tan"}]},
+  {k:"harga",   t:"number", label:"Harga Sawit Semasa (RM/1000kg)", req:true, step:"0.01", ph:"cth: 840"},
+  {k:"no_penyata", t:"text", label:"No. Penyata/Chit", ph:"cth: CHIT-0012"}
 ];
 
 var ROLE_SECTIONS = { pembeli:["pembeli"], kontraktor:["kontraktor"], dua:["pembeli","kontraktor"] };
@@ -293,29 +288,27 @@ function fldHtmlP(f, ri){
   if (f.t === "select"){
     var opts = (f.opts||[]).map(function(o){ return typeof o === "string" ? {v:o,l:o} : o; })
       .map(function(o){ return '<option value="'+esc(o.v)+'"'+(o.v===val?' selected':'')+'>'+esc(o.l)+'</option>'; }).join("");
-    inp = '<select id="'+id+'" data-k="'+f.k+'"'+(f.req?" required":"")+'>'+(f.k==="unit"?"":'<option value="">— pilih —</option>')+opts+'</select>';
+    inp = '<select id="'+id+'" data-ri="'+ri+'" data-k="'+f.k+'"'+(f.req?" required":"")+'>'+(f.k==="unit"?"":'<option value="">— pilih —</option>')+opts+'</select>';
   } else if (f.t === "date"){
-    inp = '<input type="date" id="'+id+'" data-k="'+f.k+'" value="'+esc(val)+'"'+(f.req?" required":"")+'>';
+    inp = '<input type="date" id="'+id+'" data-ri="'+ri+'" data-k="'+f.k+'" value="'+esc(val)+'"'+(f.req?" required":"")+'>';
   } else if (f.t === "number"){
-    inp = '<input type="number" id="'+id+'" data-k="'+f.k+'" step="'+(f.step||"any")+'" min="0" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
+    inp = '<input type="number" id="'+id+'" data-ri="'+ri+'" data-k="'+f.k+'" step="'+(f.step||"any")+'" min="0" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
   } else {
-    inp = '<input type="text" id="'+id+'" data-k="'+f.k+'" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
+    inp = '<input type="text" id="'+id+'" data-ri="'+ri+'" data-k="'+f.k+'" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
   }
   return '<div class="f-field '+(f.cls==="full"?"full":"")+'">'+lab+inp+'</div>';
 }
+function rowTan(r){ return r.unit === "kg" ? num(r.berat)/1000 : num(r.berat); }
+function rowAmount(r){ return rowTan(r) * num(r.harga); }
 function sumPembeli(){
-  var rows = state.rows.pembeli, tTan=0, tKasar=0, tPot=0;
+  var rows = state.rows.pembeli, tTan=0, tAmt=0;
   rows.forEach(function(r){
-    tTan += num(r.tan); tKasar += num(r.tan)*num(r.harga);
-    tPot += num(r.upah)+num(r.racun)+num(r.baja)+num(r.browning)+num(r.lain);
+    tTan += rowTan(r); tAmt += rowAmount(r);
   });
-  return rows.length + " potong/penyata · " + fmt(tTan,3) + " tan · Kasar RM" + fmt(tKasar,2)
-       + " · Potongan RM" + fmt(tPot,2) + " · Bersih RM" + fmt(tKasar-tPot,2);
+  return "🧾 Jumlah Jualan Keseluruhan: RM" + fmt(tAmt,2) + " · (" + rows.length + " potong · " + fmt(tTan,3) + " tan)";
 }
 function rowSumP(r){
-  var kasar = num(r.tan)*num(r.harga);
-  var pot = num(r.upah)+num(r.racun)+num(r.baja)+num(r.browning)+num(r.lain);
-  return "Kasar RM"+fmt(kasar,2)+" − Potongan RM"+fmt(pot,2)+" = Bersih RM"+fmt(kasar-pot,2);
+  return "💵 Amaun Hasil Jualan (auto): RM" + fmt(rowAmount(r),2);
 }
 function renderPembeli(){
   var rows = state.rows.pembeli;
@@ -324,7 +317,7 @@ function renderPembeli(){
   rows.forEach(function(r, ri){
     var div = document.createElement("div");
     div.className = "row-item";
-    var html = '<div class="row-title"><span>Potong / Penyata #'+(ri+1)+'</span>'
+    var html = '<div class="row-title"><span>Jualan Potongan #'+(ri+1)+'</span>'
       + (rows.length>1 ? '<button type="button" class="btn-del" data-ri="'+ri+'">✖ Buang</button>' : '') + '</div>';
     html += '<div class="f-grid">' + FIELDS_PEMBELI.map(function(f){ return fldHtmlP(f, ri); }).join("") + '</div>';
     html += '<div class="row-sum" id="rowsum_p_'+ri+'">—</div>';
@@ -332,6 +325,8 @@ function renderPembeli(){
     box.appendChild(div);
     var blk = div.querySelector('[data-k="blok"]');
     if (blk && !blk.value){ blk.value = "B-001"; r.blok = "B-001"; }
+    var unt = div.querySelector('[data-k="unit"]');
+    if (unt && !unt.value){ unt.value = "kg"; r.unit = "kg"; }
     div.querySelectorAll("input,select").forEach(function(inp){
       inp.addEventListener("input", function(){
         var rr = state.rows.pembeli[+inp.dataset.ri]; if (!rr) return;
@@ -457,7 +452,10 @@ el("bfForm").addEventListener("submit", async function(e){
         FIELDS_PEMBELI.forEach(function(f){ var v=r[f.k]||""; if(f.t==="number" && v!=="") v=String(num(v)); o[f.k]=v; });
         var ada = Object.keys(o).some(function(k){ return o[k]!=="" && o[k]!=null; });
         if (!ada) return;
-        if (!o.tarikh || num(o.tan)<=0 || num(o.harga)<=0) throw "Baris jualan #"+(state.rows.pembeli.indexOf(r)+1)+": tarikh, berat (tan) & harga (RM/tan) wajib dan > 0.";
+        var tanV = (o.unit === "kg") ? num(o.berat)/1000 : num(o.berat);
+        var amt = tanV * num(o.harga);
+        o.tan = String(tanV); o.amount = String(amt);
+        if (!o.tarikh || !(tanV > 0) || !(num(o.harga) > 0)) throw "Baris jualan #"+(state.rows.pembeli.indexOf(r)+1)+": tarikh, berat (kg/tan) & harga sawit semasa (RM/1000kg) wajib dan > 0.";
         rowsP.push(o);
       });
     }
@@ -525,9 +523,8 @@ el("bfForm").addEventListener("submit", async function(e){
     if (r && document.querySelector('[data-role="'+r+'"]')) setRole(r);
     if (qs.get("demo") === "1"){
       el("f_nama").value = "Ali bin Abu (contoh)"; el("f_wa").value = "012-3456789";
-      el("f_pihak").value = "Anak Jati Maju Enterprise";
       if (state.rows.pembeli.length){ var r0 = state.rows.pembeli[0];
-        r0.tarikh="2026-09-08"; r0.tan="1.3"; r0.harga="840"; r0.upah="104"; r0.no_penyata="CHIT-001"; r0.blok="B-001"; }
+        r0.tarikh="2026-09-08"; r0.berat="1300"; r0.unit="kg"; r0.harga="840"; r0.no_penyata="CHIT-001"; r0.blok="B-001"; }
       if (r === "dua" || r === "kontraktor"){
         el("c_tarikh").value = "2026-09-30"; el("c_nobill").value = "BILL-2026-09";
         el("c_dari").value = "2026-09-01"; el("c_hingga").value = "2026-09-30";
