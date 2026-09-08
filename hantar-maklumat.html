@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hantar Maklumat Ladang — Strategic Agro Tech</title>
+<meta name="description" content="Hantar rekod jualan FFB & kerja ladang (pembeli / pengurus-kontraktor) — Strategic Agro Tech.">
+<style>
+  :root{--hijau:#14532d;--hijau2:#166534;--hijau3:#16a34a;--teks:#1e293b;--kelabu:#64748b;--garis:#d7e3d9}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;color:var(--teks);background:#f1f5f0;line-height:1.6}
+  .header{background:linear-gradient(135deg,#14532d,#166534 55%,#15803d);color:#fff;padding:16px 20px}
+  .header .in{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{font-size:28px}
+  .brand-text strong{font-size:17px;display:block}
+  .brand-text small{opacity:.85;font-size:12.5px}
+  .btn-wa{background:#25D366;color:#fff;text-decoration:none;font-weight:700;padding:8px 15px;border-radius:24px;font-size:13.5px;white-space:nowrap}
+  main{max-width:960px;margin:0 auto;padding:22px 16px 46px}
+  h1.pg{font-size:25px;margin:2px 0 4px;color:#0f2f1d}
+  .subpg{color:#475569;font-size:14px;margin-bottom:14px}
+  .privacy-note{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:11px 15px;font-size:13px;margin-bottom:18px}
+  .form-wrap{max-width:860px;margin:0 auto}
+  .form-card{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  .form-card h2{font-size:18px;margin:0 0 3px;color:#0f2f1d}
+  .form-card .sub{color:var(--kelabu);font-size:13px;margin:0 0 14px}
+  .step-tag{display:inline-block;background:var(--hijau2);color:#fff;border-radius:20px;padding:2px 12px;font-size:12px;font-weight:600;margin-bottom:8px}
+  .role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:760px){.role-cards{grid-template-columns:1fr}}
+  .role-card{border:2px solid var(--garis);border-radius:12px;padding:12px 13px;cursor:pointer;transition:all .15s}
+  .role-card:hover{border-color:#16a34a}
+  .role-card.sel{border-color:var(--hijau3);background:#f0fdf4}
+  .role-card .rc-icon{font-size:20px}
+  .role-card .rc-title{font-weight:700;font-size:13.5px;margin:3px 0 1px;color:#0f2f1d}
+  .role-card .rc-desc{font-size:11.5px;color:var(--kelabu)}
+  .f-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.f-grid{grid-template-columns:1fr}}
+  .f-field{display:flex;flex-direction:column;gap:4px}
+  .f-field.full{grid-column:1/-1}
+  .f-field label{font-size:12.5px;font-weight:600;color:#334155}
+  .f-field label .req{color:#dc2626}
+  .f-field input,.f-field select,.f-field textarea{padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;font-family:inherit;width:100%}
+  .f-field textarea{resize:vertical;min-height:48px}
+  .sec-head{display:flex;align-items:center;gap:8px;margin:2px 0 2px;font-size:15px;font-weight:800;color:#0f2f1d}
+  .sec-head .ic{font-size:18px}
+  .row-item{border:1px solid #dbe7de;border-radius:12px;padding:13px 15px;margin-bottom:11px;background:#fafdfb;position:relative}
+  .row-item .row-title{font-size:12.5px;font-weight:700;color:var(--hijau2);margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn-del{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer;font-weight:600}
+  .btn-add{background:#ecfdf5;color:var(--hijau2);border:1.5px dashed #16a34a;border-radius:10px;padding:8px;width:100%;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin:4px 0 12px}
+  .btn-add:hover{background:#dcfce7}
+  .row-sum{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:7px 12px;font-size:12.5px;color:#334155;margin-top:9px}
+  .total-chip{background:#0f2f1d;color:#d1fae5;border-radius:10px;padding:6px 13px;font-size:12.5px;font-weight:700;display:inline-block;margin:0 6px 6px 0}
+  .btn-submit{width:100%;padding:14px;background:var(--hijau2);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px}
+  .btn-submit:hover{background:#0f3d24}
+  .btn-submit:disabled{background:#94a3b8;cursor:not-allowed}
+  .consent-item{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:#334155;line-height:1.6;margin:7px 0}
+  .consent-item input{flex:0 0 auto;margin-top:3px;width:16px;height:16px;accent-color:var(--hijau2)}
+  .consent-item span{flex:1}
+  .msg-box{border-radius:10px;padding:13px 15px;font-size:13.5px;margin-top:13px;white-space:pre-wrap}
+  .msg-ok{background:#dcfce7;border:1px solid #86efac;color:#166534}
+  .msg-err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b}
+  .hidden{display:none}
+  .file-hint{font-size:12px;color:var(--kelabu);margin-top:5px}
+  .foot{background:#14532d;color:#cde7d4;text-align:center;padding:16px;font-size:12.5px}
+  .foot a{color:#fff}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="in">
+    <div class="brand">
+      <span class="logo">🌴</span>
+      <span class="brand-text">
+        <strong>Strategic Agro Tech</strong>
+        <small>Sistem Rekod Ladang Sawit</small>
+      </span>
+    </div>
+    <a class="btn-wa" href="https://wa.me/60122310119" target="_blank" rel="noopener">📲 WhatsApp</a>
+  </div>
+</header>
+
+<main>
+  <nav style="margin-bottom:10px"><a href="index.html" style="color:#166534;font-size:13.5px">← Utama</a></nav>
+  <div class="form-wrap">
+    <h1 class="pg">📋 Hantar Maklumat Ladang</h1>
+    <p class="subpg">Pilih peranan — borang akan menyesuaikan diri. Jika pihak yang sama adalah pembeli DAN pengurus/kontraktor, pilih pilihan ketiga.</p>
+    <div class="privacy-note">🔒 <strong>Privasi:</strong> Maklumat dihantar terus ke sistem selamat Strategic Agro Tech (Google Drive peribadi) — bukan paparan awam. Digunakan untuk rekod ladang & urusan sahaja (PDPA).</div>
+
+    <form id="bfForm" autocomplete="off">
+      <!-- LANGKAH 1 -->
+      <div class="form-card">
+        <span class="step-tag">LANGKAH 1</span>
+        <h2>🧑‍💼 Saya hantar sebagai</h2>
+        <p class="sub">Satu pihak boleh jadi pembeli & pengurus/kontraktor sekali (cth. Anak Jati Maju Enterprise)</p>
+        <div class="role-cards" id="roleCards">
+          <div class="role-card" data-role="pembeli">
+            <div class="rc-icon">🤝</div>
+            <div class="rc-title">Pembeli</div>
+            <div class="rc-desc">Hantar rekod jualan FFB sahaja</div>
+          </div>
+          <div class="role-card" data-role="kontraktor">
+            <div class="rc-icon">🚜</div>
+            <div class="rc-title">Pengurus / Kontraktor</div>
+            <div class="rc-desc">Hantar kerja & kos ladang sahaja</div>
+          </div>
+          <div class="role-card" data-role="dua">
+            <div class="rc-icon">🔄</div>
+            <div class="rc-title">Pembeli + Pengurus/Kontraktor</div>
+            <div class="rc-desc">Kedua-dua sekali — jualan FFB & kerja/kos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LANGKAH 2 -->
+      <div class="form-card">
+        <span class="step-tag">LANGKAH 2</span>
+        <h2>👤 Maklumat Penghantar</h2>
+        <p class="sub">Untuk pengesahan penerimaan (emel ke pengurusan)</p>
+        <div class="f-grid">
+          <div class="f-field"><label>Nama penuh <span class="req">*</span></label><input type="text" id="f_nama" placeholder="Nama penghantar" required></div>
+          <div class="f-field"><label>No. Telefon / WhatsApp <span class="req">*</span></label><input type="tel" id="f_wa" placeholder="012-3456789" required></div>
+          <div class="f-field" id="fldPihak"><label>Pihak (Pembeli/Kontraktor) <span class="req">*</span></label>
+            <select id="f_pihak" required>
+              <option value="">— pilih —</option>
+              <option value="Anak Jati Maju Enterprise">Anak Jati Maju Enterprise</option>
+              <option value="Lain">Lain (nyatakan)</option>
+            </select></div>
+          <div class="f-field hidden" id="fldPihakLain"><label>Nama pihak (lain)</label><input type="text" id="f_pihak_lain" placeholder="Nama syarikat/individu"></div>
+        </div>
+      </div>
+
+      <!-- LANGKAH 3: seksyen rekod -->
+      <div class="form-card">
+        <span class="step-tag">LANGKAH 3</span>
+        <h2>📊 Rekod</h2>
+        <p class="sub">Isi sekurang-kurangnya satu baris dalam seksyen yang berkaitan. Kiraan auto sama seperti Tracker Ladang Sawit.</p>
+
+        <!-- Seksyen Jualan FFB -->
+        <div id="sec_pembeli" class="hidden">
+          <div class="sec-head"><span class="ic">🤝</span> Rekod Jualan FFB (Log Hasil)</div>
+          <p style="font-size:12.5px;color:var(--kelabu);margin:0 0 10px">Satu baris bagi setiap potong / penyata. Kasar, Jumlah Potongan & Bersih dikira automatik.</p>
+          <div id="rowList_pembeli"></div>
+          <button type="button" class="btn-add" data-sec="pembeli">➕ Tambah potong / penyata</button>
+          <div id="sum_pembeli"></div>
+        </div>
+
+        <!-- Seksyen Kerja/Kos -->
+        <div id="sec_kontraktor" class="hidden">
+          <div class="sec-head"><span class="ic">🚜</span> Kerja & Kos Ladang (Log Kos)</div>
+          <p style="font-size:12.5px;color:var(--kelabu);margin:0 0 10px">Satu baris bagi setiap item kerja/belanja (baja, racun, upah, browning, dll).</p>
+          <div id="rowList_kontraktor"></div>
+          <button type="button" class="btn-add" data-sec="kontraktor">➕ Tambah item kerja / kos</button>
+          <div id="sum_kontraktor"></div>
+        </div>
+      </div>
+
+      <!-- LANGKAH 4: maklumat tambahan -->
+      <div class="form-card">
+        <span class="step-tag">LANGKAH 4</span>
+        <h2>📎 Maklumat & Bukti Tambahan</h2>
+        <p class="sub">Pilihan — lengkapkan jika berkaitan</p>
+        <div class="f-grid">
+          <div class="f-field"><label>Bilangan potong (kali)</label><input type="number" id="f_bil_potong" min="0" step="1" placeholder="cth: 4"></div>
+          <div class="f-field"><label>No. Lori / Kenderaan</label><input type="text" id="f_lory" placeholder="cth: WXX 1234"></div>
+          <div class="f-field full"><label>Nama pekerja / buruh</label><input type="text" id="f_pekerja" placeholder="cth: Ali bin Abu (ketua pasukan)"></div>
+          <div class="f-field full"><label>Gambar bukti (chit / timbangan / kerja)</label>
+            <input type="file" id="f_files" accept=".jpg,.jpeg,.png,.pdf" multiple>
+            <div class="file-hint">Maks 5 fail · setiap fail maks 10MB (JPG/PNG/PDF). Disimpan dalam folder bukti Drive.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LANGKAH 5 -->
+      <div class="form-card">
+        <span class="step-tag">LANGKAH 5</span>
+        <h2>✅ Pengesahan</h2>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;margin-bottom:12px">
+          <label class="consent-item"><input type="checkbox" id="fc1" required>
+            <span>Saya mengesahkan maklumat yang dihantar adalah <strong>sah dan benar</strong> mengikut rekod/penyata sebenar.</span></label>
+          <label class="consent-item"><input type="checkbox" id="fc2" required>
+            <span>Saya memberi kebenaran maklumat ini disimpan dan digunakan untuk tujuan rekod ladang & agihan, selaras dengan Akta Perlindungan Data Peribadi (PDPA) 2010.</span></label>
+        </div>
+        <input type="text" name="website" id="f_hp" value="" style="display:none" tabindex="-1" autocomplete="off">
+        <button class="btn-submit" type="submit" id="btnSubmit">📤 Hantar Maklumat</button>
+        <div id="msgBox" class="msg-box hidden"></div>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="foot">
+  <p>© 2026 Strategic Agro Tech (003536560-T) · <a href="https://zahirmjproperty.com" target="_blank" rel="noopener">Zahir MJ Property</a></p>
+</footer>
+
+<script>
+// ===== Konfigurasi =====
+var WEBHOOK = "https://script.google.com/macros/s/AKfycbz7IJBf6dkuKLTV3m-pjvL664GLDx6RJVzbRZMgyD9IobzfbcEmnAfFeuITJ7eqosECkA/exec"; // diisi selepas deploy Apps Script
+var WA_FALLBACK = "https://wa.me/60122310119";
+var BLOK_OPTIONS = [{v:"B-001", l:"B-001 — PT Jamil"}];
+var KATEGORI_KOS = ["Baja","Racun Rumpai","Racun Serangga","Upah Menuai","Upah Membaja","Upah Meracun",
+  "Angkutan FFB","Bahan Api","Selenggaraan","Browning","Pembersihan Tanah","Matikan Pokok",
+  "Tanam Anak Pokok","Lain-Lain"];
+var UNIT_KOS = ["Beg","Kg","Liter","Botol","Unit","Hari","Lori","Lain"];
+
+var FIELDS_PEMBELI = [
+  {k:"tarikh",  t:"date",   label:"Tarikh jualan", req:true},
+  {k:"blok",    t:"select", label:"Blok", req:true, opts:BLOK_OPTIONS},
+  {k:"tan",     t:"number", label:"Berat FFB (tan)", req:true, step:"0.001", ph:"cth: 1.3"},
+  {k:"harga",   t:"number", label:"Harga (RM/tan)", req:true, step:"0.01", ph:"cth: 840"},
+  {k:"upah",    t:"number", label:"Upah Potong (RM)", step:"0.01", ph:"0"},
+  {k:"racun",   t:"number", label:"Racun (RM)", step:"0.01", ph:"0"},
+  {k:"baja",    t:"number", label:"Baja (RM)", step:"0.01", ph:"0"},
+  {k:"browning",t:"number", label:"Browning (RM)", step:"0.01", ph:"0"},
+  {k:"lain",    t:"number", label:"Potongan Lain (RM)", step:"0.01", ph:"0"},
+  {k:"no_penyata", t:"text", label:"No. Penyata/Chit", ph:"cth: CHIT-0012"},
+  {k:"nota",    t:"text",   label:"Nota", cls:"full", ph:"Maklumat tambahan (jika ada)"}
+];
+var FIELDS_KONTRAKTOR = [
+  {k:"tarikh",  t:"date",   label:"Tarikh", req:true},
+  {k:"blok",    t:"select", label:"Blok", req:true, opts:BLOK_OPTIONS},
+  {k:"kategori",t:"select", label:"Kategori", req:true, opts:KATEGORI_KOS},
+  {k:"butiran", t:"text",   label:"Butiran", cls:"full", ph:"cth: Membaja 20 pokok, spray racun tepi jalan"},
+  {k:"kuantiti",t:"number", label:"Kuantiti", step:"0.01", ph:"cth: 20"},
+  {k:"unit",    t:"select", label:"Unit", opts:UNIT_KOS},
+  {k:"kos",     t:"number", label:"Kos (RM)", req:true, step:"0.01", ph:"cth: 150"},
+  {k:"pembekal",t:"text",   label:"Pembekal / Penerima", ph:"cth: Anak Jati Maju Enterprise"},
+  {k:"no_resit",t:"text",   label:"No. Resit", ph:"jika ada"},
+  {k:"nota",    t:"text",   label:"Nota", cls:"full", ph:"Maklumat tambahan (jika ada)"}
+];
+
+var ROLE_SECTIONS = { pembeli:["pembeli"], kontraktor:["kontraktor"], dua:["pembeli","kontraktor"] };
+var SEC_TITLE = { pembeli:"🤝 Rekod Jualan FFB", kontraktor:"🚜 Kerja & Kos Ladang" };
+
+var state = { role:null, rows:{ pembeli:[], kontraktor:[] } };
+
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function num(s){ var v=parseFloat(s); return isNaN(v)?0:v; }
+function fmt(n,d){ return (num(n)).toLocaleString("en-MY",{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function msgOk(t){ var b=el("msgBox"); b.className="msg-box msg-ok"; b.textContent=t; b.classList.remove("hidden"); }
+function msgErr(t){ var b=el("msgBox"); b.className="msg-box msg-err"; b.textContent=t; b.classList.remove("hidden"); }
+
+// ===== kad peranan =====
+document.querySelectorAll(".role-card").forEach(function(c){
+  c.addEventListener("click", function(){ setRole(c.dataset.role); });
+});
+function setRole(role){
+  state.role = role;
+  document.querySelectorAll(".role-card").forEach(function(x){ x.classList.toggle("sel", x.dataset.role===role); });
+  ROLE_SECTIONS[role].forEach(function(sec){ if (!state.rows[sec].length) state.rows[sec].push({}); });
+  refresh();
+}
+
+// ===== medan =====
+function fldHtml(f, sec, ri){
+  var id = "r_"+sec+"_"+ri+"_"+f.k;
+  var req = f.req ? ' <span class="req">*</span>' : "";
+  var val = ((state.rows[sec][ri]||{})[f.k] != null) ? String(state.rows[sec][ri][f.k]) : "";
+  var lab = '<label for="'+id+'">'+esc(f.label)+req+'</label>';
+  var inp = "";
+  if (f.t === "select"){
+    var opts = (f.opts||[]).map(function(o){ return typeof o === "string" ? {v:o,l:o} : o; })
+      .map(function(o){ return '<option value="'+esc(o.v)+'"'+(o.v===val?' selected':'')+'>'+esc(o.l)+'</option>'; }).join("");
+    inp = '<select id="'+id+'" data-sec="'+sec+'" data-ri="'+ri+'" data-k="'+f.k+'"'+(f.req?" required":"")+'>'
+        + (f.k==="unit"?"":'<option value="">— pilih —</option>') + opts + '</select>';
+  } else if (f.t === "date"){
+    inp = '<input type="date" id="'+id+'" data-sec="'+sec+'" data-ri="'+ri+'" data-k="'+f.k+'" value="'+esc(val)+'"'+(f.req?" required":"")+'>';
+  } else if (f.t === "number"){
+    inp = '<input type="number" id="'+id+'" data-sec="'+sec+'" data-ri="'+ri+'" data-k="'+f.k+'" step="'+(f.step||"any")+'" min="0" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
+  } else {
+    inp = '<input type="text" id="'+id+'" data-sec="'+sec+'" data-ri="'+ri+'" data-k="'+f.k+'" value="'+esc(val)+'" placeholder="'+esc(f.ph||"")+'"'+(f.req?" required":"")+'>';
+  }
+  return '<div class="f-field '+(f.cls==="full"?"full":"")+'">'+lab+inp+'</div>';
+}
+function rowFields(sec){ return sec==="pembeli" ? FIELDS_PEMBELI : FIELDS_KONTRAKTOR; }
+
+function sumSec(sec){
+  var rows = state.rows[sec];
+  if (sec === "pembeli"){
+    var tTan=0, tKasar=0, tPot=0;
+    rows.forEach(function(r){
+      tTan += num(r.tan); tKasar += num(r.tan)*num(r.harga);
+      tPot += num(r.upah)+num(r.racun)+num(r.baja)+num(r.browning)+num(r.lain);
+    });
+    return rows.length + " potong/penyata · " + fmt(tTan,3) + " tan · Kasar RM" + fmt(tKasar,2)
+         + " · Potongan RM" + fmt(tPot,2) + " · Bersih RM" + fmt(tKasar-tPot,2);
+  }
+  var tKos = rows.reduce(function(a,r){ return a + num(r.kos); }, 0);
+  return rows.length + " item · Jumlah Kos RM" + fmt(tKos,2);
+}
+function rowSumHtml(sec, r){
+  if (sec === "pembeli"){
+    var kasar = num(r.tan)*num(r.harga);
+    var pot = num(r.upah)+num(r.racun)+num(r.baja)+num(r.browning)+num(r.lain);
+    return "Kasar RM"+fmt(kasar,2)+" − Potongan RM"+fmt(pot,2)+" = Bersih RM"+fmt(kasar-pot,2);
+  }
+  return "Kos: RM"+fmt(r.kos,2)+(r.kuantiti? " · Kuantiti: "+r.kuantiti+(r.unit||"") : "");
+}
+function renderSec(sec){
+  var rows = state.rows[sec];
+  var box = el("rowList_"+sec);
+  box.innerHTML = "";
+  rows.forEach(function(r, ri){
+    var div = document.createElement("div");
+    div.className = "row-item";
+    var html = '<div class="row-title"><span>'+esc(SEC_TITLE[sec])+' #'+(ri+1)+'</span>'
+      + (rows.length>1 ? '<button type="button" class="btn-del" data-sec="'+sec+'" data-ri="'+ri+'">✖ Buang</button>' : '') + '</div>';
+    html += '<div class="f-grid">' + rowFields(sec).map(function(f){ return fldHtml(f, sec, ri); }).join("") + '</div>';
+    html += '<div class="row-sum" id="rowsum_'+sec+'_'+ri+'">—</div>';
+    div.innerHTML = html;
+    box.appendChild(div);
+    var blk = div.querySelector('[data-k="blok"]');
+    if (blk && !blk.value){ blk.value = "B-001"; r.blok = "B-001"; }
+    div.querySelectorAll("input,select").forEach(function(inp){
+      inp.addEventListener("input", function(){
+        var rr = state.rows[inp.dataset.sec]; if (!rr) return;
+        rr[+inp.dataset.ri][inp.dataset.k] = inp.value;
+        el("rowsum_"+sec+"_"+ri).textContent = rowSumHtml(sec, state.rows[sec][ri]);
+        el("sum_"+sec).innerHTML = '<span class="total-chip">'+esc(sumSec(sec))+'</span>';
+      });
+    });
+    el("rowsum_"+sec+"_"+ri).textContent = rowSumHtml(sec, r);
+  });
+  el("sum_"+sec).innerHTML = '<span class="total-chip">'+esc(sumSec(sec))+'</span>';
+}
+function refresh(){
+  var act = ROLE_SECTIONS[state.role] || [];
+  ["pembeli","kontraktor"].forEach(function(sec){
+    var show = act.indexOf(sec) >= 0;
+    el("sec_"+sec).classList.toggle("hidden", !show);
+    if (show) renderSec(sec);
+  });
+}
+document.querySelectorAll(".btn-add").forEach(function(b){
+  b.addEventListener("click", function(){
+    var sec = b.dataset.sec;
+    state.rows[sec].push({});
+    renderSec(sec);
+    var rows = el("rowList_"+sec).children;
+    if (rows.length) rows[rows.length-1].scrollIntoView({behavior:"smooth", block:"center"});
+  });
+});
+document.querySelectorAll("#rowList_pembeli,#rowList_kontraktor").forEach(function(host){
+  host.addEventListener("click", function(e){
+    var b = e.target.closest(".btn-del"); if (!b) return;
+    var sec = b.dataset.sec, ri = +b.dataset.ri;
+    state.rows[sec].splice(ri, 1);
+    if (!state.rows[sec].length) state.rows[sec].push({});
+    renderSec(sec);
+  });
+});
+el("f_pihak").addEventListener("change", function(){
+  el("fldPihakLain").classList.toggle("hidden", el("f_pihak").value !== "Lain");
+  el("f_pihak_lain").required = el("f_pihak").value === "Lain";
+});
+
+// ===== fail → base64 =====
+function fileToBase64(file){
+  return new Promise(function(res, rej){
+    var r = new FileReader();
+    r.onload = function(){ res({ name:file.name, mime:file.type||"application/octet-stream", data:r.result.split(",")[1] }); };
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ===== hantar =====
+el("bfForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var box = el("msgBox"); box.classList.add("hidden");
+  if (!state.role){ msgErr("⚠️ Sila pilih peranan di Langkah 1."); return; }
+  if (el("f_hp").value) return; // honeypot
+  var nama = el("f_nama").value.trim(), wa = el("f_wa").value.trim();
+  if (!nama || !wa){ msgErr("⚠️ Sila lengkapkan nama & no. WhatsApp di Langkah 2."); return; }
+  var pihak = el("f_pihak").value;
+  var pihakLain = el("f_pihak_lain").value.trim();
+  if (!pihak){ msgErr("⚠️ Sila pilih pihak (Pembeli/Kontraktor) di Langkah 2."); return; }
+  if (pihak === "Lain" && !pihakLain){ msgErr("⚠️ Sila nyatakan nama pihak (Lain)."); return; }
+  var pihakNama = pihak === "Lain" ? pihakLain : pihak;
+
+  // kumpul & validasi rows per seksyen aktif
+  var rows = { pembeli:[], kontraktor:[] };
+  try {
+    ROLE_SECTIONS[state.role].forEach(function(sec){
+      state.rows[sec].forEach(function(r){
+        var o = {};
+        rowFields(sec).forEach(function(f){ var v = r[f.k]||""; if (f.t==="number" && v!=="") v=String(num(v)); o[f.k]=v; });
+        var ada = Object.keys(o).some(function(k){ return o[k]!=="" && o[k]!=null; });
+        if (!ada) return;
+        if (sec==="pembeli" && (!o.tarikh || num(o.tan)<=0 || num(o.harga)<=0)) throw "Baris jualan #"+(state.rows[sec].indexOf(r)+1)+": tarikh, berat (tan) & harga (RM/tan) wajib dan > 0.";
+        if (sec==="kontraktor" && (!o.tarikh || !o.kategori || num(o.kos)<=0)) throw "Baris kerja #"+(state.rows[sec].indexOf(r)+1)+": tarikh, kategori & kos (RM) wajib dan kos > 0.";
+        rows[sec].push(o);
+      });
+    });
+    if (!rows.pembeli.length && !rows.kontraktor.length) throw "Tiada data di Langkah 3 — sila isi sekurang-kurangnya satu baris.";
+  } catch (err){ msgErr("⚠️ " + err.message); return; }
+
+  // bukti fail
+  var files = [];
+  var fl = el("f_files");
+  if (fl.files && fl.files.length){
+    if (fl.files.length > 5){ msgErr("⚠️ Maksimum 5 fail bukti."); return; }
+    for (var i=0;i<fl.files.length;i++){
+      if (fl.files[i].size > 10*1024*1024){ msgErr("⚠️ Fail \""+fl.files[i].name+"\" melebihi 10MB."); return; }
+    }
+    for (var j=0;j<fl.files.length;j++) files.push(await fileToBase64(fl.files[j]));
+  }
+
+  var payload = {
+    peranan: state.role,
+    peranan_label: state.role==="pembeli" ? "Pembeli" : (state.role==="kontraktor" ? "Pengurus/Kontraktor" : "Pembeli + Pengurus/Kontraktor"),
+    nama: nama, wa: wa, pihak: pihakNama,
+    rows: rows,
+    extras: {
+      bil_potong: el("f_bil_potong").value,
+      lory: el("f_lory").value.trim(),
+      pekerja: el("f_pekerja").value.trim()
+    },
+    files: files
+  };
+
+  var btn = el("btnSubmit");
+  btn.disabled = true; btn.textContent = "⏳ Menghantar...";
+  try {
+    if (WEBHOOK){
+      var resp = await fetch(WEBHOOK, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload) });
+      var data = await resp.json();
+      if (!data.ok) throw new Error(data.error || "Server menolak");
+      var n = (data.hasil||0) + (data.kos||0);
+      msgOk("✅ Diterima! " + n + " rekod masuk Tracker Ladang Sawit" + (data.folderUrl ? "\n📁 Bukti: " + data.folderUrl : "") + "\nPengurusan akan mengesahkan melalui WhatsApp.");
+      el("bfForm").reset(); state.rows={pembeli:[],kontraktor:[]}; refresh();
+    } else {
+      var txt = "🌴 HANTAR MAKLUMAT LADANG (Strategic Agro Tech)\nPeranan: "+payload.peranan_label+"\n👤 "+nama+" | 📞 "+wa+"\n🏢 Pihak: "+pihakNama+"\n\n";
+      ["pembeli","kontraktor"].forEach(function(sec){
+        rows[sec].forEach(function(r,i){
+          txt += "── "+SEC_TITLE[sec]+" #"+(i+1)+" ──\n";
+          rowFields(sec).forEach(function(f){ var v=r[f.k]; if(v!==""&&v!=null) txt += f.label+": "+v+"\n"; });
+          txt += "\n";
+        });
+      });
+      if (payload.extras.bil_potong) txt += "Bilangan potong: "+payload.extras.bil_potong+"\n";
+      if (payload.extras.lory) txt += "No. Lori: "+payload.extras.lory+"\n";
+      if (payload.extras.pekerja) txt += "Pekerja: "+payload.extras.pekerja+"\n";
+      msgOk("🔗 Webhook belum disambung — buka WhatsApp untuk hantar terus (mesej disediakan).");
+      window.open(WA_FALLBACK+"?text="+encodeURIComponent(txt), "_blank");
+    }
+  } catch (err){
+    msgErr("⚠️ Ralat: " + err.message + "\nSila cuba lagi, atau hubungi pengurusan di WhatsApp 012-2310119.");
+  }
+  btn.disabled = false; btn.textContent = "📤 Hantar Maklumat";
+});
+// preview helper (dev): ?role=&demo=1
+(function(){
+  try {
+    var qs = new URLSearchParams(location.search);
+    var r = qs.get("role");
+    if (r && document.querySelector('[data-role="'+r+'"]')) setRole(r);
+    if (qs.get("demo") === "1"){
+      el("f_nama").value = "Ali bin Abu (contoh)"; el("f_wa").value = "012-3456789";
+      el("f_pihak").value = "Anak Jati Maju Enterprise";
+      if (state.rows.pembeli.length){ var r0 = state.rows.pembeli[0];
+        r0.tarikh="2026-09-08"; r0.tan="1.3"; r0.harga="840"; r0.upah="104"; r0.no_penyata="CHIT-001"; r0.blok="B-001"; }
+      if (state.rows.kontraktor.length){ var r1 = state.rows.kontraktor[0];
+        r1.tarikh="2026-09-08"; r1.kategori="Browning"; r1.butiran="Spray browning tepi jalan"; r1.kos="300"; r1.kuantiti="2"; r1.unit="Hari"; r1.blok="B-001"; }
+      el("f_bil_potong").value = "1"; el("f_lory").value = "WXX 1234"; el("f_pekerja").value = "Ali bin Abu";
+      refresh();
+    }
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
