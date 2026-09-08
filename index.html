@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Strategic Agro Tech — Sistem Ladang</title>
-<meta name="description" content="Strategic Agro Tech — sistem rekod ladang kelapa sawit: hantar maklumat kerja ladang & hasil tuaian.">
+<title>Strategic Agro Technology — Sistem Ladang</title>
+<meta name="description" content="Strategic Agro Technology — sistem rekod ladang kelapa sawit: hantar rekod jualan FFB & tuntutan kos kontraktor.">
 <style>
   :root{--hijau:#14532d;--hijau2:#166534;--hijau3:#16a34a;--teks:#1e293b;--kelabu:#64748b}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -22,8 +22,8 @@
   .hero .badge{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);padding:5px 14px;border-radius:20px;font-size:13px;margin-top:12px}
   .main{max-width:980px;margin:0 auto;padding:34px 20px 50px}
   h2.sec{font-size:21px;color:#14532d;margin:26px 0 14px}
-  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:700px){.cards{grid-template-columns:1fr}}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
   .card{background:#fff;border:1px solid #d7e3d9;border-radius:14px;padding:22px;text-decoration:none;color:inherit;display:block;transition:transform .12s,box-shadow .12s}
   .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,83,45,.14)}
   .card .ic{font-size:34px}
@@ -42,7 +42,7 @@
     <div class="brand">
       <span class="logo">🌴</span>
       <span class="brand-text">
-        <strong>Strategic Agro Tech</strong>
+        <strong>Strategic Agro Technology</strong>
         <small>Sistem Rekod Ladang Sawit</small>
       </span>
     </div>
@@ -52,33 +52,40 @@
 
 <section class="hero">
   <h1>📋 Sistem Hantar Maklumat Ladang</h1>
-  <p>Rekod kerja ladang & hasil tuaian kelapa sawit secara terus dari pengurus tapak dan pembeli hasil — tanpa perlu akaun.</p>
-  <span class="badge">🌿 Kelapa sawit · Strategic Agro Tech</span>
+  <p>Rekod jualan hasil & tuntutan kos ladang kelapa sawit secara terus — tanpa perlu akaun.</p>
+  <span class="badge">🌿 Kelapa sawit · Strategic Agro Technology</span>
 </section>
 
 <main class="main">
+  <h2 class="sec">Pilih peranan anda:</h2>
   <div class="cards">
-    <a class="card" href="hantar-maklumat.html">
-      <div class="ic">🚜</div>
-      <h3>Kontraktor / Pengurus Tapak</h3>
-      <p>Hantar maklumat kerja ladang: meracun, membaja, browning, pembersihan tanah, matikan pokok, tanam anak pokok, upah potong & lain-lain.</p>
-      <span class="go">Hantar Kerja Ladang →</span>
-    </a>
-    <a class="card" href="hantar-maklumat.html">
+    <a class="card" href="hantar-maklumat.html?role=pembeli">
       <div class="ic">🤝</div>
-      <h3>Pembeli Hasil (FFB)</h3>
-      <p>Rekod hasil tuaian: berat hasil, bilangan potong, berat setiap potong & harga jualan.</p>
-      <span class="go">Hantar Rekod Hasil →</span>
+      <h3>Pembeli</h3>
+      <p>Hantar rekod jualan FFB: tarikh, berat hasil, harga & no. penyata/chit.</p>
+      <span class="go">Hantar Jualan FFB →</span>
+    </a>
+    <a class="card" href="hantar-maklumat.html?role=kontraktor">
+      <div class="ic">🚜</div>
+      <h3>Pengurus / Kontraktor</h3>
+      <p>Hantar tuntutan kos kerja (bill / progress payment): upah potong, meracun, membaja, racun, baja, browning & lain-lain.</p>
+      <span class="go">Hantar Tuntutan Kos →</span>
+    </a>
+    <a class="card" href="hantar-maklumat.html?role=dua">
+      <div class="ic">🔄</div>
+      <h3>Pembeli + Pengurus/Kontraktor</h3>
+      <p>Pihak yang sama (cth. Anak Jati Maju Enterprise) — hantar jualan FFB & tuntutan kos sekali.</p>
+      <span class="go">Hantar Kedua-duanya →</span>
     </a>
   </div>
   <div class="note">
-    🔒 <strong>Privasi:</strong> Maklumat yang dihantar disimpan dalam sistem selamat Strategic Agro Tech (Google Drive peribadi) — bukan paparan awam. Digunakan untuk rekod ladang & urusan sahaja (PDPA).
+    🔒 <strong>Privasi:</strong> Maklumat yang dihantar disimpan dalam sistem selamat Strategic Agro Technology (Google Drive peribadi) — bukan paparan awam. Digunakan untuk rekod ladang & urusan sahaja (PDPA).
   </div>
   <p style="text-align:center;color:#64748b;font-size:13.5px">Soalan? Hubungi pengurusan melalui WhatsApp <a href="https://wa.me/60122310119" target="_blank" rel="noopener">012-2310119</a>.</p>
 </main>
 
 <footer class="foot">
-  <p>© 2026 Strategic Agro Tech (003536560-T) · <a href="https://zahirmjproperty.com" target="_blank" rel="noopener">Zahir MJ Property</a></p>
+  <p>© 2026 Strategic Agro Technology (003536560-T) · <a href="https://zahirmjproperty.com" target="_blank" rel="noopener">Zahir MJ Property</a></p>
 </footer>
 
 </body>
