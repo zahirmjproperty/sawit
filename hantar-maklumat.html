@@ -132,10 +132,11 @@
       <div class="form-card">
         <span class="step-tag">LANGKAH 2</span>
         <h2>👤 Maklumat Penghantar</h2>
-        <p class="sub">Untuk pengesahan penerimaan (emel ke pengurusan)</p>
+        <p class="sub">Salinan emel akan dihantar ke emel anda selepas hantar — untuk pengesahan & tambahan maklumat (balas emel itu).</p>
         <div class="f-grid">
           <div class="f-field"><label>Nama penuh <span class="req">*</span></label><input type="text" id="f_nama" placeholder="Nama penghantar" required></div>
           <div class="f-field"><label>No. Telefon / WhatsApp <span class="req">*</span></label><input type="tel" id="f_wa" placeholder="012-3456789" required></div>
+          <div class="f-field"><label>Emel <span class="req">*</span></label><input type="email" id="f_emel" placeholder="cth. nama@gmail.com" required></div>
           <div class="f-field" id="fldPihak"><label>Pihak (Pembeli/Kontraktor) <span class="req">*</span></label>
             <select id="f_pihak" required>
               <option value="">— pilih —</option>
@@ -436,8 +437,9 @@ el("bfForm").addEventListener("submit", async function(e){
   var box = el("msgBox"); box.classList.add("hidden");
   if (!state.role){ msgErr("⚠️ Sila pilih peranan di Langkah 1."); return; }
   if (el("f_hp").value) return; // honeypot
-  var nama = el("f_nama").value.trim(), wa = el("f_wa").value.trim();
-  if (!nama || !wa){ msgErr("⚠️ Sila lengkapkan nama & no. WhatsApp di Langkah 2."); return; }
+  var nama = el("f_nama").value.trim(), wa = el("f_wa").value.trim(), emel = el("f_emel").value.trim();
+  if (!nama || !wa || !emel){ msgErr("⚠️ Sila lengkapkan nama, no. WhatsApp & emel di Langkah 2."); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emel)){ msgErr("⚠️ Alamat emel tidak sah."); return; }
   var pihak = el("f_pihak").value, pihakLain = el("f_pihak_lain").value.trim();
   if (!pihak){ msgErr("⚠️ Sila pilih pihak (Pembeli/Kontraktor) di Langkah 2."); return; }
   if (pihak === "Lain" && !pihakLain){ msgErr("⚠️ Sila nyatakan nama pihak (Lain)."); return; }
@@ -490,7 +492,7 @@ el("bfForm").addEventListener("submit", async function(e){
   var payload = {
     peranan: state.role,
     peranan_label: state.role==="pembeli" ? "Pembeli" : (state.role==="kontraktor" ? "Pengurus/Kontraktor" : "Pembeli + Pengurus/Kontraktor"),
-    nama: nama, wa: wa, pihak: pihakNama,
+    nama: nama, wa: wa, emel: emel, pihak: pihakNama,
     rows: { pembeli: rowsP },
     claim: claim,
     extras: { bil_potong: el("f_bil_potong").value, lory: el("f_lory").value.trim(), pekerja: el("f_pekerja").value.trim() },
@@ -507,6 +509,7 @@ el("bfForm").addEventListener("submit", async function(e){
     msgOk("✅ Diterima! " + n + " rekod masuk Tracker Ladang Sawit"
       + (data.tuntutan ? " (tuntutan " + (data.hasil ? "+ jualan " : "") + ")" : "")
       + (data.folderUrl ? "\n📁 Bukti: " + data.folderUrl : "")
+      + "\n📩 Salinan dihantar ke emel anda — balas emel itu untuk pertanyaan / tambahan maklumat."
       + "\nPengurusan akan mengesahkan melalui WhatsApp.");
     el("bfForm").reset(); state.rows={pembeli:[]}; refresh();
   } catch (err){
